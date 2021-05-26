@@ -20,7 +20,7 @@ export abstract class PositionableStream extends Stream {
         super();
         this._values = values;
     }
-    
+
     public get position(): number {
         return this._position;
     }
@@ -28,7 +28,7 @@ export abstract class PositionableStream extends Stream {
     /*  
      * Answer true if the collection has no elements otherwise, answer false.
      */
-    
+
     public isEmpty(): boolean {
         return this._values.length === 0;
     }
@@ -71,11 +71,11 @@ export abstract class PositionableStream extends Stream {
 
         let someValue = null;
 
-        while(!this.atEnd() && someValue !== value) {
+        while (!this.atEnd() && someValue !== value) {
             someValue = this.next;
 
             if (someValue !== value) {
-                response.push(someValue);                
+                response.push(someValue);
             }
         }
 
@@ -102,8 +102,8 @@ export abstract class PositionableStream extends Stream {
      */
     public get upToEnd(): ArrayLike<any> {
         const response = [];
-        
-        while(!this.atEnd()) {
+
+        while (!this.atEnd()) {
             response.push(this.next);
         }
 
@@ -121,7 +121,7 @@ export abstract class PositionableStream extends Stream {
      * If the argument is not within the bounds of the collection, return undefined.
      */
 
-    public setPosition(someValue: number): undefined {
+    public setPosition(someValue: number): number | undefined {
         if (someValue >= 0 && someValue <= this._values.length) {
             this._position = someValue;
             return someValue;
@@ -149,7 +149,7 @@ export abstract class PositionableStream extends Stream {
      * possibly adjusting the result so as to remain within the bounds of the collection.
      */
     public skip(someValue: number) {
-        
+
         if (this.setPosition(this._position + someValue) === undefined) {
             this.setToEnd();
         }
@@ -160,17 +160,17 @@ export abstract class PositionableStream extends Stream {
      * in the collection. Answer wheter such an occurence existed.
      */
     public skipTo(value: any): boolean {
-        while(!this.atEnd()) {
+        while (!this.atEnd()) {
 
             if (this.next === value) {
                 this.skip(1);
-                return true;                
+                return true;
             }
         }
 
         return false;
-    }  
-    
+    }
+
     public atEnd(): boolean {
         return this._position === this._values.length;
     }
@@ -186,8 +186,8 @@ export abstract class PositionableStream extends Stream {
     public getNext(n: number): ArrayLike<any> {
         const startPosition = this._position < 0 ? 0 : this._position;
         const endPosition = startPosition + n;
-        const value =  (this._values as Sequence).slice(startPosition, endPosition);
-        
+        const value = (this._values as Sequence).slice(startPosition, endPosition);
+
         this._position = endPosition
         return value;
     }
