@@ -29,7 +29,7 @@ export abstract class PositionableStream extends Stream {
      * Answer true if the collection has no elements otherwise, answer false.
      */
     
-    public isEmpty() {
+    public isEmpty(): boolean {
         return this._values.length === 0;
     }
 
@@ -39,7 +39,7 @@ export abstract class PositionableStream extends Stream {
      * Answer undefined if the reference position is at the end.
      */
 
-    public get peek() {
+    public get peek(): any | undefined {
         if (!this.atEnd()) {
             return this._values[this._position + 1];
         }
@@ -52,7 +52,7 @@ export abstract class PositionableStream extends Stream {
      * reference and answer true. Otherwise answer false and do not
      * change the position reference.
      */
-    public peekFor(value: any) {
+    public peekFor(value: any): boolean {
         if (value && this.peek === value) {
             this._position = this._position + 1;
             return true;
@@ -66,7 +66,7 @@ export abstract class PositionableStream extends Stream {
      * of, the next element that is equal to the argument value. If value
      * is not in the collection, answer the entire rest of the collection.
      */
-    public upTo(value: any) {
+    public upTo(value: any): ArrayLike<any> {
         const response = [];
 
         let someValue = null;
@@ -121,7 +121,7 @@ export abstract class PositionableStream extends Stream {
      * If the argument is not within the bounds of the collection, return undefined.
      */
 
-    public setPosition(someValue: number) {
+    public setPosition(someValue: number): undefined {
         if (someValue >= 0 && someValue <= this._values.length) {
             this._position = someValue;
             return someValue;
@@ -140,7 +140,7 @@ export abstract class PositionableStream extends Stream {
     /*
      * Set the receiver's position reference to the end of the collection.
      */
-    public setToEnd() {
+    public setToEnd(): void {
         this._position = this._values.length;
     }
 
@@ -159,7 +159,7 @@ export abstract class PositionableStream extends Stream {
      * Set the reference position to be past the next occurence of the argument, value,
      * in the collection. Answer wheter such an occurence existed.
      */
-    public skipTo(value: any) {
+    public skipTo(value: any): boolean {
         while(!this.atEnd()) {
 
             if (this.next === value) {
@@ -175,7 +175,7 @@ export abstract class PositionableStream extends Stream {
         return this._position === this._values.length;
     }
 
-    public get next() {
+    public get next(): any | undefined {
         if (!this.atEnd()) {
             this._position = this._position + 1;
             return this._values[this._position];
@@ -192,15 +192,15 @@ export abstract class PositionableStream extends Stream {
         return value;
     }
 
-    public get contents() {
+    public get contents(): ArrayLike<any> {
         return this._values;
     }
 
-    public nextMatchFor(_value: any) {
+    public nextMatchFor(_value: any): boolean {
         return this.next === _value;
     }
 
-    public doEach(f: (e: any) => any) {
+    public doEach(f: (e: any) => any): void {
         const values = [...(this._values as Array<any>)];
 
         values.forEach(x => f(x));

@@ -1,7 +1,7 @@
 import { PositionableStream } from "./positionable-stream";
 
 interface Sequence extends ArrayLike<any> {
-   slice(firstIndex: number, lastIndex: number): Sequence
+    slice(firstIndex: number, lastIndex: number): Sequence
 }
 
 export class ReadStream extends PositionableStream {
@@ -16,8 +16,8 @@ export class ReadStream extends PositionableStream {
         return new ReadStream(values);
     }
 
-    public static onFrom(values: ArrayLike<any>, fromFirstIndex: number, toLastIndex: number) {
-       
+    public static onFrom(values: ArrayLike<any>, fromFirstIndex: number, toLastIndex: number): ReadStream {
+        
         return ReadStream.on((values as Sequence).slice(fromFirstIndex, toLastIndex));
     }
 
