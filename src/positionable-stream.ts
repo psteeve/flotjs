@@ -8,9 +8,7 @@ interface Sequence extends ArrayLike<any> {
 
 /*
  * It provide additional protocol appropriate to streams that can reposition their position references
- * but, it is an abstract class because it does not provide an implementation of the inherited messages next and nextPut. 
- * The implementation of theses messages is left to the 
- * subclasses of positionable-stream: ReadStream, WriteStream, ReadWriteStream.
+ *
  */
 export abstract class PositionableStream extends Stream {
     private _position: number = -1;
