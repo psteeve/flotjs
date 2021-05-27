@@ -196,8 +196,8 @@ export abstract class PositionableStream extends Stream {
         return this._values;
     }
 
-    public nextMatchFor(_value: any): boolean {
-        return this.next === _value;
+    public nextMatchFor(value: any): boolean {
+        return this.next === value;
     }
 
     public doEach(f: (e: any) => any): void {
