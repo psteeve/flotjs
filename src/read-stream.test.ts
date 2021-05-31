@@ -1,4 +1,4 @@
-import {ReadStream} from './read-stream';
+import { ReadStream } from './read-stream';
 
 
 describe('ReadStream', () => {
@@ -15,9 +15,9 @@ describe('ReadStream', () => {
             expect(ReadStream.onFrom("test", 0, 1).contents).toEqual("t");
             expect(ReadStream.onFrom("test", 0, 4).contents).toBe("test");
             expect(ReadStream.onFrom("test", 0, 3).contents).toBe("tes");
-            expect(ReadStream.onFrom("test", 0, 2).contents).toBe("te"); 
+            expect(ReadStream.onFrom("test", 0, 2).contents).toBe("te");
         })
-        
+
     });
 
     describe('Basic ReadStream API', () => {
@@ -46,7 +46,7 @@ describe('ReadStream', () => {
 
             s.setToEnd();
 
-            expect(s.position).toBe(4);
+            expect(s.position).toBe(3);
         });
 
         test('it should capable of accessing the next accessible element of the stream', () => {
@@ -64,7 +64,7 @@ describe('ReadStream', () => {
         test('it should capable of accessing the next n accessible elements of the stream', () => {
             const s = ReadStream.on('test');
 
-            expect(s.getNext(2)).toBe('te'); 
+            expect(s.getNext(2)).toBe('te');
 
             expect(s.getNext(2)).toBe('st');
 
@@ -108,6 +108,17 @@ describe('ReadStream', () => {
 
             s.setPosition(0);
             expect(s.atEnd()).toBe(false);
+
+            s.reset();
+
+            s.next;
+            s.next;
+            s.next;
+            s.next;
+
+            console.log(s.position);
+
+            expect(s.atEnd()).toBe(true);
         });
 
         test('it should capable of testing if the next element of the stream is equal to a value and changing the position if it is', () => {
@@ -129,19 +140,19 @@ describe('ReadStream', () => {
 
             expect(s.upTo('t')).toEqual('s');
             expect(s.position).toBe(3)
-            
+
             const s1 = ReadStream.on('test');
             expect(s1.upTo('f')).toEqual('test')
-            expect(s1.position).toBe(4);
+            expect(s1.position).toBe(3);
 
             s.setToEnd();
             expect(s.upTo('e')).toEqual('')
-            expect(s.position).toBe(4);
+            expect(s.position).toBe(3);
 
             s.reset();
 
             expect(s.upTo('i')).toEqual('test')
-            expect(s.position).toBe(4);      
+            expect(s.position).toBe(3);
 
         });
 
@@ -150,12 +161,12 @@ describe('ReadStream', () => {
 
             s.skip(10);
 
-            expect(s.position).toBe(4);
+            expect(s.position).toBe(3);
             expect(s.atEnd()).toBe(true);
 
             s.skip(2);
 
-            expect(s.position).toBe(4);
+            expect(s.position).toBe(3);
 
             s.reset();
 
@@ -177,7 +188,7 @@ describe('ReadStream', () => {
 
             expect(s.skipTo('i')).toBe(false);
 
-            expect(s.position).toBe(4);
+            expect(s.position).toBe(3);
 
             expect(s.skipTo('e')).toBe(false);
 

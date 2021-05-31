@@ -120,7 +120,7 @@ export abstract class PositionableStream extends Stream {
      */
 
     public setPosition(someValue: number): number | undefined {
-        if (someValue >= 0 && someValue <= this._values.length) {
+        if (someValue >= 0 && someValue <= this._values.length - 1) {
             this._position = someValue;
             return someValue;
         }
@@ -139,7 +139,7 @@ export abstract class PositionableStream extends Stream {
      * Set the receiver's position reference to the end of the collection.
      */
     public setToEnd(): void {
-        this._position = this._values.length;
+        this._position = this._values.length - 1;
     }
 
     /*
@@ -170,7 +170,7 @@ export abstract class PositionableStream extends Stream {
     }
 
     public atEnd(): boolean {
-        return this._position === this._values.length;
+        return this._position === this._values.length - 1;
     }
 
     public get next(): any | undefined {
