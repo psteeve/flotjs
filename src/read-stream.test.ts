@@ -1,34 +1,36 @@
-import { ReadStream } from './read-stream';
+import { ReadStream, streamOn, streamOnFrom } from './read-stream';
+import { reset, next, getNext, nextMatchFor, peek, peekFor, upTo, skip, skipTo, upToEnd, doEach } from './positionable-stream';
 
 
 describe('ReadStream', () => {
     describe('Creation of ReadStream', () => {
         test('it should create a read-stream object', () => {
-            expect(ReadStream.on("fdkaflfakfklafdl")).toBeInstanceOf(ReadStream)
+            expect(streamOn("fdkaflfakfklafdl")).toBeInstanceOf(ReadStream)
         });
 
         test('it should create a read-stream with a contents equal to the collection', () => {
-            expect(ReadStream.on("test").contents).toBe("test");
+            expect(streamOn("test").contents).toBe("test");
         })
 
         test('it should create a read-stream object from indexes', () => {
-            expect(ReadStream.onFrom("test", 0, 1).contents).toEqual("t");
-            expect(ReadStream.onFrom("test", 0, 4).contents).toBe("test");
-            expect(ReadStream.onFrom("test", 0, 3).contents).toBe("tes");
-            expect(ReadStream.onFrom("test", 0, 2).contents).toBe("te");
+            expect(streamOnFrom("test", 0, 1).contents).toEqual("t");
+            expect(streamOnFrom("test", 0, 4).contents).toBe("test");
+            expect(streamOnFrom("test", 0, 3).contents).toBe("tes");
+            expect(streamOnFrom("test", 0, 2).contents).toBe("te");
         })
 
     });
 
     describe('Basic ReadStream API', () => {
+
         test('it should capable of reset position', () => {
-            const stream = ReadStream.on('test');
-            stream.reset();
+            const stream = streamOn('test');
+            reset(stream);
             expect(stream.position).toBe(-1);
         });
 
         test('it should capable of setting a valid position', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
             s.setPosition(0);
             expect(s.position).toBe(0);
 
@@ -42,7 +44,7 @@ describe('ReadStream', () => {
         });
 
         test('it should capable of setting a stream to end', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
             s.setToEnd();
 
@@ -50,71 +52,72 @@ describe('ReadStream', () => {
         });
 
         test('it should capable of accessing the next accessible element of the stream', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.next).toBe('t');
+            expect(next(s)).toBe('t');
 
             expect(s.position).toBe(0);
 
             s.setToEnd();
 
-            expect(s.next).toBe(undefined);
+            expect(next(s)).toBe(undefined);
         });
 
         test('it should capable of accessing the next n accessible elements of the stream', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.getNext(2)).toBe('te');
+            expect(getNext(s, 2)).toBe('te');
 
-            expect(s.getNext(2)).toBe('st');
+            expect(getNext(s, 2)).toBe('st');
 
-            s.reset();
+            reset(s);
 
-            expect(s.getNext(4)).toBe('test');
+            expect(getNext(s, 4)).toBe('test');
 
         });
 
         test('it should capable of accessing the next value and answer whether it is equal to the an argument.', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.nextMatchFor('t')).toBe(true);
+            expect(nextMatchFor(s, 't')).toBe(true);
 
             expect(s.position).toBe(0)
 
-            expect(s.nextMatchFor('e')).toBe(true);
+            expect(nextMatchFor(s, 'e')).toBe(true);
 
-            expect(s.nextMatchFor('e')).toBe(false);
+            expect(nextMatchFor(s, 'e')).toBe(false);
         });
 
 
         test('it should capable of accessing the next accessible element of the stream without setting the position', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.peek).toBe('t');
+            expect(peek(s)).toBe('t');
 
             expect(s.position).toBe(-1);
 
             s.setToEnd();
 
-            expect(s.peek).toBe(undefined);
+            expect(peek(s)).toBe(undefined);
         });
 
         test('it should capable of testing if the stream is a the end', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
             s.setToEnd();
 
             expect(s.atEnd()).toBe(true);
 
             s.setPosition(0);
+
             expect(s.atEnd()).toBe(false);
 
-            s.reset();
+            reset(s);
 
-            s.next;
-            s.next;
-            s.next;
-            s.next;
+            next(s);
+            next(s);
+            next(s);
+            next(s);
 
             console.log(s.position);
 
@@ -122,96 +125,96 @@ describe('ReadStream', () => {
         });
 
         test('it should capable of testing if the next element of the stream is equal to a value and changing the position if it is', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.peekFor('t')).toBe(true);
+            expect(peekFor(s, 't')).toBe(true);
             expect(s.position).toBe(0);
 
-            expect(s.peekFor('k')).toBe(false);
+            expect(peekFor(s, 'k')).toBe(false);
             expect(s.position).toBe(0);
 
         });
 
         test('it should capable of going up to a value and return a collection', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.upTo('e')).toEqual('t')
+            expect(upTo(s, 'e')).toEqual('t')
             expect(s.position).toBe(1);
 
-            expect(s.upTo('t')).toEqual('s');
+            expect(upTo(s, 't')).toEqual('s');
             expect(s.position).toBe(3)
 
-            const s1 = ReadStream.on('test');
-            expect(s1.upTo('f')).toEqual('test')
+            const s1 = streamOn('test');
+            expect(upTo(s1, 'f')).toEqual('test')
             expect(s1.position).toBe(3);
 
             s.setToEnd();
-            expect(s.upTo('e')).toEqual('')
+            expect(upTo(s, 'e')).toEqual('')
             expect(s.position).toBe(3);
 
-            s.reset();
+            reset(s);
 
-            expect(s.upTo('i')).toEqual('test')
+            expect(upTo(s, 'i')).toEqual('test')
             expect(s.position).toBe(3);
 
         });
 
         test('it should capable of skipping some values', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            s.skip(10);
+            skip(s, 10);
 
             expect(s.position).toBe(3);
             expect(s.atEnd()).toBe(true);
 
-            s.skip(2);
+            skip(s, 2);
 
             expect(s.position).toBe(3);
 
-            s.reset();
+            reset(s);
 
-            s.skip(3);
+            skip(s, 3);
             expect(s.position).toBe(2);
 
         });
 
         test('it should capable to skip to a value', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.skipTo('t')).toBe(true);
+            expect(skipTo(s, 't')).toBe(true);
 
-            expect(s.skipTo('t')).toBe(true);
+            expect(skipTo(s, 't')).toBe(true);
 
-            expect(s.skipTo('t')).toBe(false);
+            expect(skipTo(s, 't')).toBe(false);
 
-            s.reset();
+            reset(s);
 
-            expect(s.skipTo('i')).toBe(false);
+            expect(skipTo(s, 'i')).toBe(false);
 
             expect(s.position).toBe(3);
 
-            expect(s.skipTo('e')).toBe(false);
+            expect(skipTo(s, 'e')).toBe(false);
 
         });
 
         test('it should capable to answer the contents from the current position to the  end of the stream ', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            expect(s.upToEnd).toBe('test');
+            expect(upToEnd(s)).toBe('test');
 
             s.setPosition(2);
 
-            expect(s.upToEnd).toBe('t');
+            expect(upToEnd(s)).toBe('t');
         });
 
         test('it should capable of evaluationg an function for each element of the stream', () => {
-            const s = ReadStream.on('test');
+            const s = streamOn('test');
 
-            s.doEach(x => expect('test'.includes(x)).toBe(true));
+            doEach(s, (x: string) => expect('test'.includes(x)).toBe(true));
         });
 
         test('it should answer if a stream is empty', () => {
-            const s = ReadStream.on('');
+            const s = streamOn('');
 
             expect(s.isEmpty()).toBe(true);
         });

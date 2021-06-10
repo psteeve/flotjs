@@ -4,22 +4,26 @@ interface Sequence extends ArrayLike<any> {
     slice(firstIndex: number, lastIndex: number): Sequence
 }
 
-export class ReadStream extends PositionableStream {
-    
-    /*
-     * Answer an instance of a kind of PositionableStream
-     * that streams over the argument, values. 
-     * Or stream over a subcollection of the argument, values,
-     * from firstIndex to lastIndex.
-     */
-    public static on(values: ArrayLike<any>): ReadStream {
-        return new ReadStream(values);
-    }
+let stream: ReadStream;
 
-    public static onFrom(values: ArrayLike<any>, fromFirstIndex: number, toLastIndex: number): ReadStream {
-        
-        return ReadStream.on((values as Sequence).slice(fromFirstIndex, toLastIndex));
-    }
+/*
+ * Answer an instance of a kind of PositionableStream
+ * that streams over the argument, values. 
+ * Or stream over a subcollection of the argument, values,
+ * from firstIndex to lastIndex.
+ */
+export function streamOn(values: ArrayLike<any>): ReadStream {
+    stream = new ReadStream(values);
+    return stream;
+}
+
+
+export function streamOnFrom(values: ArrayLike<any>, fromFirstIndex: number, toLastIndex: number): ReadStream {
+    return streamOn((values as Sequence).slice(fromFirstIndex, toLastIndex));
+}
+
+
+export class ReadStream extends PositionableStream {
 
     /*
      * Answer an instance of a kind of PositionableStream
@@ -27,7 +31,7 @@ export class ReadStream extends PositionableStream {
      */
     public constructor(values: any) {
         super(values);
-        
+
     }
 
 }
