@@ -9,7 +9,7 @@ interface Sequence extends ArrayLike<any> {
  * Set the reference position to the beginning of the collection.
  */
 export function reset(s: PositionableStream): PositionableStream {
-    s.position = -1;
+    s._position = -1;
     return s;
 }
 
@@ -146,7 +146,7 @@ export function doEach(s: PositionableStream, f: (e: any) => any): void {
  *
  */
 export abstract class PositionableStream extends Stream {
-    private _position: number = -1;
+    public _position: number = -1;
     private _values: ArrayLike<any>;
 
     constructor(values: ArrayLike<any>) {

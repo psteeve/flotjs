@@ -119,8 +119,6 @@ describe('ReadStream', () => {
             next(s);
             next(s);
 
-            console.log(s.position);
-
             expect(s.atEnd()).toBe(true);
         });
 
