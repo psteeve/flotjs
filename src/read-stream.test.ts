@@ -205,7 +205,7 @@ describe('ReadStream', () => {
             expect(upToEnd(s)).toBe('t');
         });
 
-        test('it should capable of evaluationg an function for each element of the stream', () => {
+        test('it should capable of evaluationg a function for each element of the stream', () => {
             const s = streamOn('test');
 
             doEach(s, (x: string) => expect('test'.includes(x)).toBe(true));
